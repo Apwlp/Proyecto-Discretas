@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Álgebra Relacional vs SQL</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Proyecto Matemáticas Discretas</h1>
+            <p>Equivalencia entre Álgebra Relacional y SQL</p>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        {% for demo in demostraciones %}
+        <section class="card">
+            <h2>{{ demo.titulo }}</h2>
+            <p class="description">{{ demo.descripcion }}</p>
+            
+            <div class="comparison">
+                <div class="box math-box">
+                    <h3>Álgebra Relacional</h3>
+                    <p class="formula">$$ {{ demo.formula }} $$</p>
+                </div>
+                <div class="box sql-box">
+                    <h3>Consulta SQL</h3>
+                    <code>{{ demo.sql_query }}</code>
+                </div>
+            </div>
+
+            <div class="result-table">
+                <h3>Resultado del Conjunto:</h3>
+                {% if demo.estado == 'ok' %}
+                <table>
+                    <thead>
+                        <tr>
+                            {% for col in demo.columnas_mostrar %}
+                            <th>{{ col|capitalize }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fila in demo.datos %}
+                        <tr>
+                            {% for col in demo.columnas_mostrar %}
+                            <td>{{ fila[col] }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="100%">El conjunto resultante está vacío.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="error">{{ demo.estado }}</p>
+                {% endif %}
+            </div>
+        </section>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <p>ESPOL - PAO II 2025</p>
+    </footer>
+</body>
+</html>
