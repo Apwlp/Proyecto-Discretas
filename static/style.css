@@ -64,3 +64,9 @@ footer {
 .error { 
     color: red; font-weight: bold; 
 }
+
+pre {
+    white-space: pre-wrap;       /* Ajusta el texto si es muy largo */
+    font-family: 'Consolas', 'Monaco', monospace;
+    margin: 0;
+}

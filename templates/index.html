@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Álgebra Relacional - Proyecto</title>
+    <title>Álgebra Relacional en Python</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -12,7 +12,7 @@
     <header>
         <div class="container">
             <h1>Proyecto Matemáticas Discretas</h1>
-            <p>Implementación del Álgebra Relacional en SQL</p>
+            <p>Implementación de Operadores de Conjuntos con Algoritmos en Python</p>
         </div>
     </header>
 
@@ -29,14 +29,13 @@
                     <p class="formula">$$ {{ demo.formula }} $$</p>
                 </div>
                 <div class="box sql-box">
-                    <h3>Consulta SQL</h3>
-                    <code>{{ demo.sql_query }}</code>
+                    <h3>Algoritmo Python Ejecutado</h3>
+                    <pre><code>{{ demo.codigo_visible }}</code></pre>
                 </div>
             </div>
 
             <div class="result-table">
-                <h3>Resultado:</h3>
-                {% if demo.estado == 'ok' %}
+                <h3>Resultado Calculado:</h3>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
@@ -59,9 +58,7 @@
                         </tbody>
                     </table>
                 </div>
-                {% else %}
-                <p class="error">{{ demo.estado }}</p>
-                {% endif %}
+                <p style="font-size: 0.8em; color: #666; margin-top: 5px;">Estado: {{ demo.estado }}</p>
             </div>
         </section>
         {% endfor %}
@@ -69,7 +66,7 @@
         <hr style="margin: 50px 0; border: 0; border-top: 2px dashed #ccc;">
         
         <section id="visor-tablas">
-            <h2 style="text-align: center; color: #333;">📂 Base de Datos Completa (Estado Actual)</h2>
+            <h2 style="text-align: center; color: #333;">📂 Datos Crudos en Base de Datos (Origen)</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
                 {% for nombre_tabla, info in tablas_db.items() %}
                 <div class="card">
@@ -106,7 +103,7 @@
     </div>
 
     <footer>
-        <p>ESPOL - PAO II 2025</p>
+        <p>ESPOL - PAO II 2025 - Algoritmos Relacionales</p>
     </footer>
 </body>
 </html>
