@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Álgebra Relacional en Python</title>
+    <title>Intérprete Álgebra Relacional</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -12,68 +12,128 @@
     <header>
         <div class="container">
             <h1>Proyecto Matemáticas Discretas</h1>
-            <p>Implementación de Operadores de Conjuntos con Algoritmos en Python</p>
+            <p>Intérprete Funcional de Álgebra Relacional</p>
         </div>
     </header>
 
     <div class="container main-content">
-        
-        {% for demo in demostraciones %}
-        <section class="card">
-            <h2>{{ demo.titulo }}</h2>
-            <p class="description">{{ demo.descripcion }}</p>
-            
-            <div class="comparison">
-                <div class="box math-box">
-                    <h3>Álgebra Relacional</h3>
-                    <p class="formula">$$ {{ demo.formula }} $$</p>
+
+        <section class="card interactiva">
+            <div class="flex-layout">
+                <div class="console-area">
+                    <h2 class="console-title">λ Consola de Álgebra</h2>
+                    <p>Escribe comandos funcionales para operar los conjuntos.</p>
+                    
+                    <form method="POST" action="/">
+                        <textarea name="algebra_input" rows="5" class="code-input" placeholder="Ej: proyectar(seleccionar(Estudiantes, &quot;carrera == 'Computación'&quot;), 'nombre')">{{ query_usuario }}</textarea>
+                        <br>
+                        <button type="submit" class="btn-run">Calcular Resultado</button>
+                    </form>
+
+                    {% if error_interactivo %}
+                        <div class="alert error"><strong>Error:</strong> {{ error_interactivo }}</div>
+                    {% endif %}
                 </div>
-                <div class="box sql-box">
-                    <h3>Algoritmo Python Ejecutado</h3>
-                    <pre><code>{{ demo.codigo_visible }}</code></pre>
+
+                <div class="cheat-sheet">
+                    <h3>📖 Guía Rápida</h3>
+                    <ul>
+                        <li><code>Estudiantes</code>, <code>Materias</code>, <code>Profesores</code></li>
+                        <li><code>seleccionar(Tabla, "condicion")</code></li>
+                        <li><code>proyectar(Tabla, 'col1', 'col2')</code></li>
+                        <li><code>union(Tabla1, Tabla2)</code></li>
+                        <li><code>diferencia(Tabla1, Tabla2)</code></li>
+                        <li><code>producto(Tabla1, Tabla2)</code></li>
+                    </ul>
+                    <p><small>¡Puedes anidar funciones!</small></p>
                 </div>
             </div>
 
-            <div class="result-table">
-                <h3>Resultado Calculado:</h3>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                {% for col in demo.columnas_mostrar %}
-                                <th>{{ col|capitalize }}</th>
+            {% if resultado_interactivo %}
+                <div class="result-area">
+                    {% if resultado_interactivo.mensaje %}
+                        <p class="info">ℹ️ {{ resultado_interactivo.mensaje }}</p>
+                    {% endif %}
+
+                    {% if resultado_interactivo.columnas %}
+                    <h3>Resultado Calculado:</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    {% for col in resultado_interactivo.columnas %}
+                                    <th>{{ col|capitalize }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fila in resultado_interactivo.datos %}
+                                <tr>
+                                    {% for col in resultado_interactivo.columnas %}
+                                    <td>{{ fila[col] }}</td>
+                                    {% endfor %}
+                                </tr>
                                 {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for fila in demo.datos %}
-                            <tr>
-                                {% for col in demo.columnas_mostrar %}
-                                <td>{{ fila[col] }}</td>
-                                {% endfor %}
-                            </tr>
-                            {% else %}
-                            <tr><td colspan="100%">Conjunto vacío.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
                 </div>
-                <p style="font-size: 0.8em; color: #666; margin-top: 5px;">Estado: {{ demo.estado }}</p>
+            {% endif %}
+        </section>
+
+        <hr class="separator">
+        <h2 class="section-title">Demostraciones Automáticas</h2>
+
+        {% for demo in demostraciones %}
+        <section class="card">
+            <h2>{{ demo.titulo }}</h2>
+            <p>{{ demo.desc }}</p>
+            
+            <div class="comparison">
+                <div class="box math-box">
+                    <h3>Notación</h3>
+                    <p class="formula">$$ {{ demo.formula }} $$</p>
+                </div>
+                <div class="box code-box">
+                    <h3>Código Python</h3>
+                    <pre><code>{{ demo.codigo }}</code></pre>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for col in demo.cols %}
+                            <th>{{ col|capitalize }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fila in demo.datos %}
+                        <tr>
+                            {% for col in demo.cols %}
+                            <td>{{ fila[col] }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="100%">Vacío</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </section>
         {% endfor %}
 
-        <hr style="margin: 50px 0; border: 0; border-top: 2px dashed #ccc;">
-        
-        <section id="visor-tablas">
-            <h2 style="text-align: center; color: #333;">📂 Datos Crudos en Base de Datos (Origen)</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
-                {% for nombre_tabla, info in tablas_db.items() %}
-                <div class="card">
-                    <h3 style="background-color: #003668; color: white; padding: 10px; margin: -25px -25px 20px -25px; border-radius: 8px 8px 0 0;">
-                        Tabla: {{ nombre_tabla }}
-                    </h3>
-                    <div style="overflow-x: auto;">
+        <hr class="separator">
+        <section id="visor">
+            <h2 class="section-title">📂 Tablas Base (Memoria)</h2>
+            <div class="grid-container">
+                {% for nombre, info in tablas_db.items() %}
+                <div class="card mini-card">
+                    <h3 class="card-header">{{ nombre }}</h3>
+                    <div class="table-wrapper">
                         <table>
                             <thead>
                                 <tr>
@@ -89,8 +149,6 @@
                                     <td>{{ fila[col] }}</td>
                                     {% endfor %}
                                 </tr>
-                                {% else %}
-                                <tr><td colspan="100%">Tabla vacía</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -101,9 +159,6 @@
         </section>
 
     </div>
-
-    <footer>
-        <p>ESPOL - PAO II 2025 - Algoritmos Relacionales</p>
-    </footer>
+    <footer>ESPOL - PAO II 2025</footer>
 </body>
 </html>
