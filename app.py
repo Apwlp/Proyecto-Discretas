@@ -12,7 +12,7 @@ def get_db_connection():
 def index():
     conn = get_db_connection()
     
-    # Aquí definimos la "Traducción" de Álgebra a SQL
+    # --- PARTE 1: LAS DEMOSTRACIONES (Álgebra vs SQL) ---
     demostraciones = [
         {
             "id": "seleccion",
@@ -35,7 +35,7 @@ def index():
             "titulo": "3. Unión (∪)",
             "formula": r"\pi_{Nombre}(Estudiantes) \cup \pi_{Nombre}(Profesores)",
             "sql_query": "SELECT nombre FROM Estudiantes UNION SELECT nombre FROM Profesores;",
-            "descripcion": "Combina conjuntos. Note cómo 'Carlos' aparece solo una vez aunque esté en ambas tablas (propiedad de conjuntos).",
+            "descripcion": "Combina conjuntos. Note cómo 'Carlos' aparece solo una vez (propiedad de conjuntos).",
             "columnas_mostrar": ["nombre"]
         },
         {
@@ -43,7 +43,7 @@ def index():
             "titulo": "4. Diferencia (-)",
             "formula": r"Estudiantes_{Discretas} - Estudiantes_{Cálculo}",
             "sql_query": "SELECT id_estudiante FROM Inscripciones WHERE codigo_materia = 'MAT001' EXCEPT SELECT id_estudiante FROM Inscripciones WHERE codigo_materia = 'MAT002';",
-            "descripcion": "Muestra IDs de estudiantes en Discretas que NO están en Cálculo. (En SQL estándar se usa EXCEPT o MINUS).",
+            "descripcion": "Muestra IDs de estudiantes en Discretas que NO están en Cálculo. (SQL usa EXCEPT).",
             "columnas_mostrar": ["id_estudiante"]
         },
         {
@@ -51,12 +51,12 @@ def index():
             "titulo": "5. Producto Cartesiano (×)",
             "formula": r"Estudiantes \times Materias",
             "sql_query": "SELECT nombre, nombre_materia FROM Estudiantes CROSS JOIN Materias LIMIT 8;",
-            "descripcion": "Combina cada estudiante con cada materia. (Limitado a 8 filas para visualización).",
+            "descripcion": "Combina todos con todos (Limitado a 8 filas para visualización).",
             "columnas_mostrar": ["nombre", "nombre_materia"]
         }
     ]
 
-    # Ejecutar las consultas dinámicamente
+    # Ejecutar demostraciones
     resultados_finales = []
     for demo in demostraciones:
         try:
@@ -66,11 +66,30 @@ def index():
             demo['estado'] = 'ok'
         except Exception as e:
             demo['datos'] = []
-            demo['estado'] = f'Error: {e}'
+            demo['estado'] = f'Error SQL: {e}'
         resultados_finales.append(demo)
 
+    # --- PARTE 2: VISOR DE TABLAS COMPLETAS (Para solucionar tu error) ---
+    tablas_crudas = {}
+    lista_de_tablas = ['Estudiantes', 'Materias', 'Profesores', 'Inscripciones']
+
+    for tabla in lista_de_tablas:
+        try:
+            cur = conn.execute(f"SELECT * FROM {tabla}")
+            filas = cur.fetchall()
+            if filas:
+                # Obtener nombres de columnas dinámicamente
+                nombres_columnas = [description[0] for description in cur.description]
+                tablas_crudas[tabla] = {"columnas": nombres_columnas, "datos": filas}
+            else:
+                tablas_crudas[tabla] = {"columnas": [], "datos": []}
+        except Exception as e:
+            print(f"Error leyendo tabla {tabla}: {e}")
+
     conn.close()
-    return render_template('index.html', demostraciones=resultados_finales)
+    
+    # IMPORTANTE: Aquí pasamos AMBAS variables al HTML
+    return render_template('index.html', demostraciones=resultados_finales, tablas_db=tablas_crudas)
 
 if __name__ == '__main__':
     app.run(debug=True)

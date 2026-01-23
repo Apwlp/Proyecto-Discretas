@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Álgebra Relacional vs SQL</title>
+    <title>Álgebra Relacional - Proyecto</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -12,11 +12,12 @@
     <header>
         <div class="container">
             <h1>Proyecto Matemáticas Discretas</h1>
-            <p>Equivalencia entre Álgebra Relacional y SQL</p>
+            <p>Implementación del Álgebra Relacional en SQL</p>
         </div>
     </header>
 
     <div class="container main-content">
+        
         {% for demo in demostraciones %}
         <section class="card">
             <h2>{{ demo.titulo }}</h2>
@@ -34,34 +35,74 @@
             </div>
 
             <div class="result-table">
-                <h3>Resultado del Conjunto:</h3>
+                <h3>Resultado:</h3>
                 {% if demo.estado == 'ok' %}
-                <table>
-                    <thead>
-                        <tr>
-                            {% for col in demo.columnas_mostrar %}
-                            <th>{{ col|capitalize }}</th>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for col in demo.columnas_mostrar %}
+                                <th>{{ col|capitalize }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fila in demo.datos %}
+                            <tr>
+                                {% for col in demo.columnas_mostrar %}
+                                <td>{{ fila[col] }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="100%">Conjunto vacío.</td></tr>
                             {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for fila in demo.datos %}
-                        <tr>
-                            {% for col in demo.columnas_mostrar %}
-                            <td>{{ fila[col] }}</td>
-                            {% endfor %}
-                        </tr>
-                        {% else %}
-                        <tr><td colspan="100%">El conjunto resultante está vacío.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
                 {% else %}
                 <p class="error">{{ demo.estado }}</p>
                 {% endif %}
             </div>
         </section>
         {% endfor %}
+
+        <hr style="margin: 50px 0; border: 0; border-top: 2px dashed #ccc;">
+        
+        <section id="visor-tablas">
+            <h2 style="text-align: center; color: #333;">📂 Base de Datos Completa (Estado Actual)</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+                {% for nombre_tabla, info in tablas_db.items() %}
+                <div class="card">
+                    <h3 style="background-color: #003668; color: white; padding: 10px; margin: -25px -25px 20px -25px; border-radius: 8px 8px 0 0;">
+                        Tabla: {{ nombre_tabla }}
+                    </h3>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    {% for col in info.columnas %}
+                                    <th>{{ col|capitalize }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fila in info.datos %}
+                                <tr>
+                                    {% for col in info.columnas %}
+                                    <td>{{ fila[col] }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="100%">Tabla vacía</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
     </div>
 
     <footer>
