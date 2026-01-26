@@ -13,7 +13,7 @@ Este proyecto web, desarrollado para la materia de **Matemáticas Discretas**, b
 
 ## Guía de Instalación y Ejecución
 
-Sigue estos pasos para desplegar el proyecto localmente en tu máquina:
+Sigue estos pasos para desplegar el proyecto localmente:
 
 ### 1. Preparar el entorno
 Es fundamental asegurarse de que no haya una base de datos previa para evitar conflictos de esquemas. Si existe el archivo `database.db`, elimínalo manualmente o usa la terminal:
