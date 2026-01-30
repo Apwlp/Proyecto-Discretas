@@ -8,10 +8,8 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# =========================================================
-#  MOTOR DE ÁLGEBRA RELACIONAL (Lógica Pura en Python)
-# =========================================================
 
+# Logica Algebra Relacional
 def seleccionar(tabla, condicion):
     """
     Equivalente a Sigma (σ).
@@ -83,10 +81,8 @@ def producto(tabla_a, tabla_b):
             res.append(combinacion)
     return res[:20] # Limitamos a 20 resultados por seguridad
 
-# =========================================================
-#  RUTAS DEL SERVIDOR
-# =========================================================
 
+#  RUTAS DEL SERVIDOR
 @app.route('/', methods=['GET', 'POST'])
 def index():
     conn = get_db_connection()
@@ -132,7 +128,7 @@ def index():
             except Exception as e:
                 error_interactivo = f"Error en la fórmula: {e}"
 
-    # 3. GENERAR DEMOSTRACIONES AUTOMÁTICAS (Para la clase)
+    # 3. GENERAR DEMOSTRACIONES AUTOMÁTICAS
     
     # Demo Selección
     d_sel = seleccionar(estudiantes, "carrera == 'Computación'")
